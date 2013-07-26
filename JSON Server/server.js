@@ -27,8 +27,12 @@ function checkRequest (request, response) {
         loadAlbumList(response, handleAlbumList);
     }
 
-    if (shouldShowAlbumPhotos(url)) {
+    else if (shouldShowAlbumPhotos(url)) {
         loadAlbumContent(response, url, handleAlbumContent);
+    }
+
+    else {
+        noContent(response);
     }
 }
 
@@ -46,7 +50,7 @@ function shouldShowAlbumPhotos (url) {
 }
 
 function loadAlbumList (response, callback) {
-    fs.readdir('albums/', function (err, files) {
+    fs.readdir(__dirname + '/albums/', function (err, files) {
         if (err) {
             return callback(response, err);
         }
@@ -89,7 +93,7 @@ function displaySuccess (response, albums) {
 function loadAlbumContent (response, url, callback) {
     var path = url.substring(0, url.length - 5),
         album = path.substring(path.lastIndexOf('/') + 1),
-        directory = './' + path;
+        directory = __dirname + path;
 
     fs.readdir(directory, function (err, files) {
         if (err) {
