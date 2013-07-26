@@ -51,21 +51,6 @@ function loadAlbumList (response, callback) {
             return callback(response, err);
         }
 
-        /*
-        files = files.filter(function (value) {
-            if (/^\./i.test(value)) {
-                return false;
-            }
-            
-            return true;
-        });
-
-        // The above Array filter code checks to see if the item starts with a `.` character 
-        // e.g. `./` or `../`
-        // But this doesn't actually test if the item is a Directory or just a file
-        // Because we want to avoid accidentally displaying files we'll need another solution.
-        */
-
         var directories = [];
 
         files.forEach(function (value) {
