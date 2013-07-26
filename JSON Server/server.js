@@ -16,6 +16,7 @@ function processRequest (request, response) {
                 return;
             }
 
+            /*
             files = files.filter(function (value) {
                 if (/^\./i.test(value)) {
                     return false;
@@ -24,7 +25,21 @@ function processRequest (request, response) {
                 return true;
             });
 
-            callback(null, files);
+            // The above Array filter code checks to see if the item starts with a `.` character 
+            // e.g. `./` or `../`
+            // But this doesn't actually test if the item is a Directory or just a file
+            // Because we want to avoid accidentally displaying files we'll need another solution.
+            */
+
+            var directories = [];
+
+            files.forEach(function (value) {
+                if (fs.statSync('albums/' + value).isDirectory()) {
+                    directories.push(value);
+                }
+            });
+
+            callback(null, directories);
         });
     }
 
