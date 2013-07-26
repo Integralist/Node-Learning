@@ -102,7 +102,9 @@ function displaySuccess (response, albums) {
 }
 
 function loadAlbumContent (response, url, callback) {
-    var directory = './' + url.substring(0, url.length - 5);
+    var path = url.substring(0, url.length - 5),
+        album = path.substring(path.lastIndexOf('/') + 1),
+        directory = './' + path;
 
     fs.readdir(directory, function (err, files) {
         if (err) {
@@ -117,22 +119,25 @@ function loadAlbumContent (response, url, callback) {
             }
         });
 
-        callback(response, null, photos);
+        callback(response, null, album, photos);
     });
 }
 
-function handleAlbumContent (response, err, photos) {
+function handleAlbumContent (response, err, album, photos) {
     if (err) {
         return displayError(response, err);
     }
 
-    displayPhotos(response, photos);
+    displayPhotos(response, album, photos);
 }
 
-function displayPhotos (response, photos) {
+function displayPhotos (response, album, photos) {
     var output = {
         error: null,
-        data: { photos: photos }
+        data: { 
+            album: album,
+            photos: photos
+        }
     };
 
     response.writeHead(200, { 'Content-Type': 'application/json' });
