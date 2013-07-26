@@ -19,3 +19,24 @@ Callbacks generally utilise the pattern where by the first argument is an error 
 If there is an error then another pattern is to check if the error being passed through is a truthy value and if so call an error handler function and `return;` out of the current function.
 
 When outputting JSON data there should always be an `error` property and a `data` property. The `error` can be assigned `null` if there wasn't an error, otherwise it'll be a `String` message describing the error (as this is more descriptive than an error code which would otherwise need to be looked up first). The `data` property can be assigned whatever the resulting data is.
+
+Node patterns indicate that devs like to return fast and early, but also the act of returning is generally considered to be for breaking the flow rather than needing the returned value. 
+
+So for example, instead of...
+
+```js
+if (err) {
+    displayError(err);
+    return;
+}
+```
+
+...you should do this...
+
+```js
+if (err) {
+    return displayError(err);
+}
+```
+
+...as in this example we don't care about the returned value, we're just running some code that displays an error but we also want to bail out of our current function as quickly as possible.
