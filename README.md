@@ -6,9 +6,11 @@ Node.js is great for common network application tasks such as those with heavy I
 
 If you want to write an application that does a lot of expensive computations and calculations, you might want to consider moving these operations to other services that your Node applications can then call remotely.
 
-This doesn't mean you should completely shy away from computationally intensive tasks. If you're doing these only some of the time, you can still include them in Node.js and take advantage of a method on the process global object called `nextTick`. This method basically says, "Give up control of execution, and then when you have a free moment, call the provided function." It tends to be significantly faster than just using the setTimeout function.
+This doesn't mean you should completely shy away from computationally intensive tasks. If you're doing these only some of the time, you can still include them in Node.js and take advantage of a method on the `process` global object called `nextTick`. This method basically says, "Give up control of execution, and then when you have a free moment, call the provided function." It tends to be significantly faster than just using the `setTimeout` function.
 
 Using `nextTick` plays much better in the single-threaded world of Node event processing and callbacks, and you can use `process.nextTick` in any situation in which you are worried that a complex or slow computation is necessary. Effectively think of it in the same way as using `setTimeout` for chunking large Arrays.
+
+Some developers believe that using `global.setImmediate` is better than `process.nextTick` because it avoids issues where `nextTick` doesn't yield to the event loop, and so `setImmediate` doesn't block other I/O.
 
 ## General Node patterns
 
