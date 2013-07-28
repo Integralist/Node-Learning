@@ -127,3 +127,21 @@ Streams are a powerful way to transfer large amounts of data in Node while maint
 You listen to stream events on the `Request` object (like a standard event system), mainly the `readable` and `end` events.
 
 You then `read()` the data coming in and once the `end` event fires, pass that read data into a callback function to do something with it.
+
+## HTTP Status'
+
+- 200 OK—Everything went fine.
+
+- 301 Moved Permanently—The requested URL has been moved, and the client should re-request it at the URL specified in the response.
+
+- 400 Bad Request—The format of the client’s request is invalid and needs to be fixed.
+
+- 401 Unauthorized—The client has asked for something it does not have permission to view. It should try again authenticating the request first.
+
+- 403 Forbidden—For whatever reason, the server is refusing to process this request. This is not the same as 401, where the client can try again with authentication.
+
+- 404 Not Found—The client has asked for something that does not exist.
+
+- 500 Internal Server Error—Something happened resulting in the server being unable to process the request. You typically use this error for situations in which you know the code has entered some sort of inconsistent or buggy state and needs developer attention.
+
+- 503 Service Unavailable—This indicates some sort of runtime failure, such as temporarily low on memory or having troubles with network resources. It’s still a fatal error like 500, but it does suggest the client could try again in a while.
