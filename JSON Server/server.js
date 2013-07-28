@@ -59,55 +59,54 @@ function shouldShowAlbumPhotos (requestedUrl) {
 
 function loadAlbumList (response, callback) {
     var directories = [],
-        pattern     = /(\d)/g,
-        pagination  = [],
-        counter     = 0,
-        done, match;
+        results = {
+            response: response,
+            directories: directories
+        },
+        done;
 
     fs.readdir(__dirname + '/albums/', function (err, files) {
         if (err) {
             return callback(err, response);
         }
 
-        // done = after(files.length, callback);
+        done = after(files.length, callback);
 
         files.forEach(function (value) {
             fs.stat('albums/' + value, function (err, stat) {
                 if (err) {
-                    callback(err, response);
-                    return callback = null; // overwrite the callback (see conditional check below)
+                    return done(err);
                 }
 
                 if (stat.isDirectory()) {
                     directories.push(value);
                 }
 
-                /*
-                    Using a basic counter is one way of handling asynchronous operations.
-                    Because this function's closure still has access to variables 
-                    outside it we can use that to help us determine when to execute the callback.
-                 */
-                if (++counter === files.length && callback) {
-                    while ((match = pattern.exec(url_settings.query)) !== null) {
-                        pagination.push(match[1]);
-                        pattern.lastIndex++;
-                    }
-
-                    directories.splice(pagination[0] * pagination[1], pagination[1]);
-                    
-                    callback(null, response, directories);
-                }
+                done(null, results);
             });
         });
     });
 }
 
-function handleAlbumList (err, response, albums) {
+function handleAlbumList (err, results) {
     if (err) {
-        return displayError(err, response);
+        return displayError(err, results.response);
     }
 
-    displaySuccess(response, albums);
+    displaySuccess(results.response, calculatePagination(results.directories));
+}
+
+function calculatePagination (directories) {
+    var pattern     = /(\d)/g,
+        pagination  = [],
+        match;
+
+    while ((match = pattern.exec(url_settings.query)) !== null) {
+        pagination.push(match[1]);
+        pattern.lastIndex++;
+    }
+
+    return directories.splice(0, pagination[1]);
 }
 
 function displayError (err, response) {
@@ -115,10 +114,10 @@ function displayError (err, response) {
     response.end(JSON.stringify(err) + '\n');
 }
 
-function displaySuccess (response, albums) {
+function displaySuccess (response, directories) {
     var output = {
         error: null,
-        data: { albums: albums }
+        data: { albums: directories }
     };
 
     response.writeHead(200, { 'Content-Type': 'application/json' });
@@ -147,19 +146,19 @@ function loadAlbumContent (response, requestedUrl, callback) {
     });
 }
 
-function handleAlbumContent (err, response, album, photos) {
+function handleAlbumContent (err, response, directory, photos) {
     if (err) {
         return displayError(err, response);
     }
 
-    displayPhotos(response, album, photos);
+    displayPhotos(response, directory, photos);
 }
 
-function displayPhotos (response, album, photos) {
+function displayPhotos (response, directory, photos) {
     var output = {
         error: null,
         data: { 
-            album: album,
+            album: directory,
             photos: photos
         }
     };
