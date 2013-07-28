@@ -60,6 +60,7 @@ function loadAlbumList (response, callback) {
     var directories = [],
         pattern = /(\d)/g,
         pagination = [],
+        counter = 0,
         match;
 
     fs.readdir(__dirname + '/albums/', function (err, files) {
@@ -68,19 +69,33 @@ function loadAlbumList (response, callback) {
         }
 
         files.forEach(function (value) {
-            if (fs.statSync('albums/' + value).isDirectory()) {
-                directories.push(value);
-            }
+            fs.stat('albums/' + value, function (err, stat) {
+                if (err) {
+                    callback(response, err);
+                    return callback = null; // overwrite the callback (see conditional check below)
+                }
+
+                if (stat.isDirectory()) {
+                    directories.push(value);
+                }
+
+                /*
+                    Using a basic counter is one way of handling asynchronous operations.
+                    Because this function's closure still has access to variables 
+                    outside it we can use that to help us determine when to execute the callback.
+                 */
+                if (++counter === files.length && callback) {
+                    while ((match = pattern.exec(url_settings.query)) !== null) {
+                        pagination.push(match[1]);
+                        pattern.lastIndex++;
+                    }
+
+                    directories.splice(pagination[0] * pagination[1], pagination[1]);
+                    
+                    callback(response, null, directories);
+                }
+            });
         });
-
-        while ((match = pattern.exec(url_settings.query)) !== null) {
-            pagination.push(match[1]);
-            pattern.lastIndex++;
-        }
-
-        directories.splice(pagination[0] * pagination[1], pagination[1]);
-
-        callback(response, null, directories);
     });
 }
 
