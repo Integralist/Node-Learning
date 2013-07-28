@@ -1,6 +1,7 @@
-var http = require('http'),
-    url  = require('url'),
-    fs   = require('fs');
+var after = require('after'),
+    http  = require('http'),
+    url   = require('url'),
+    fs    = require('fs');
 
 var server = http.createServer(processRequest);
     server.listen(8080);
@@ -58,20 +59,22 @@ function shouldShowAlbumPhotos (requestedUrl) {
 
 function loadAlbumList (response, callback) {
     var directories = [],
-        pattern = /(\d)/g,
-        pagination = [],
-        counter = 0,
-        match;
+        pattern     = /(\d)/g,
+        pagination  = [],
+        counter     = 0,
+        done, match;
 
     fs.readdir(__dirname + '/albums/', function (err, files) {
         if (err) {
-            return callback(response, err);
+            return callback(err, response);
         }
+
+        // done = after(files.length, callback);
 
         files.forEach(function (value) {
             fs.stat('albums/' + value, function (err, stat) {
                 if (err) {
-                    callback(response, err);
+                    callback(err, response);
                     return callback = null; // overwrite the callback (see conditional check below)
                 }
 
@@ -92,22 +95,22 @@ function loadAlbumList (response, callback) {
 
                     directories.splice(pagination[0] * pagination[1], pagination[1]);
                     
-                    callback(response, null, directories);
+                    callback(null, response, directories);
                 }
             });
         });
     });
 }
 
-function handleAlbumList (response, err, albums) {
+function handleAlbumList (err, response, albums) {
     if (err) {
-        return displayError(response, err);
+        return displayError(err, response);
     }
 
     displaySuccess(response, albums);
 }
 
-function displayError (response, err) {
+function displayError (err, response) {
     response.writeHead(503, { 'Content-Type': 'application/json' });
     response.end(JSON.stringify(err) + '\n');
 }
@@ -123,13 +126,13 @@ function displaySuccess (response, albums) {
 }
 
 function loadAlbumContent (response, requestedUrl, callback) {
-    var path = requestedUrl.substring(0, requestedUrl.length - 5),
-        album = path.substring(path.lastIndexOf('/') + 1),
+    var path      = requestedUrl.substring(0, requestedUrl.length - 5),
+        album     = path.substring(path.lastIndexOf('/') + 1),
         directory = __dirname + path;
 
     fs.readdir(directory, function (err, files) {
         if (err) {
-            return callback(response, err);
+            return callback(err, response);
         }
 
         var photos = [];
@@ -140,13 +143,13 @@ function loadAlbumContent (response, requestedUrl, callback) {
             }
         });
 
-        callback(response, null, album, photos);
+        callback(null, response, album, photos);
     });
 }
 
-function handleAlbumContent (response, err, album, photos) {
+function handleAlbumContent (err, response, album, photos) {
     if (err) {
-        return displayError(response, err);
+        return displayError(err, response);
     }
 
     displayPhotos(response, album, photos);
