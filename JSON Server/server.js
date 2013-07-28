@@ -134,31 +134,43 @@ function loadAlbumContent (response, requestedUrl, callback) {
             return callback(err, response);
         }
 
-        var photos = [];
+        var photos  = [],
+            done    = after(files.length, callback),
+            results = {
+                response: response,
+                album: album,
+                photos: photos
+            };
 
-        files.forEach(function (value) {
-            if (fs.statSync(directory + '/' + value).isFile()) {
-                photos.push(value);
-            }
+        files.forEach(function (item) {
+            fs.stat(directory + '/' + item, function (err, stat) {
+                if (err) {
+                    return done(err);
+                }
+
+                if (stat.isFile()) {
+                    photos.push(item);
+                }
+
+                done(null, results);
+            });
         });
-
-        callback(null, response, album, photos);
     });
 }
 
-function handleAlbumContent (err, response, directory, photos) {
+function handleAlbumContent (err, results) {
     if (err) {
-        return displayError(err, response);
+        return displayError(err, results.response);
     }
 
-    displayPhotos(response, directory, photos);
+    displayPhotos(results.response, results.album, results.photos);
 }
 
-function displayPhotos (response, directory, photos) {
+function displayPhotos (response, album, photos) {
     var output = {
         error: null,
         data: { 
-            album: directory,
+            album: album,
             photos: photos
         }
     };
