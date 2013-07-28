@@ -24,6 +24,7 @@ function processRequest (request, response) {
         curl -X GET http://localhost:8080/albums/a.json
         curl -X GET http://localhost:8080/albums/does-not-exist (errors)
         curl -X GET 'http://localhost:8080/albums.json?page=1&page_size=2'
+        curl -s -X POST -H "Content-Type: application/json" -d '{ "album": "a_renamed" }' http://localhost:8080/albums/a/rename.json
      */
 }
 
@@ -34,18 +35,29 @@ function checkRequest (request, response) {
         loadAlbumList(response, handleAlbumList);
     }
 
+    else if (shouldRenameAlbum(requestedUrl)) {
+        renameAlbum(request, response);
+    }
+
     else if (shouldShowAlbumPhotos(requestedUrl)) {
         loadAlbumContent(response, requestedUrl, handleAlbumContent);
     }
 
     else {
-        noContent(response);
+        sendFailure(response, 404, invalidResource(core_url));
     }
 }
 
 function shouldShowAlbums (requestedUrl) {
     // if /albums.json and no query string params set
     if (/\/albums\.json(?:\?.+)?/i.test(requestedUrl)) {
+        return true;
+    }
+}
+
+function shouldRenameAlbum (requestedUrl) {
+    // if /albums/xxx/rename.json and no query string params set
+    if (/\/albums\/\w+\/rename\.json$/i.test(requestedUrl)) {
         return true;
     }
 }
@@ -90,10 +102,12 @@ function loadAlbumList (response, callback) {
 
 function handleAlbumList (err, results) {
     if (err) {
-        return displayError(err, results.response);
+        return sendFailure(results.response, 404, err);
     }
 
-    displaySuccess(results.response, calculatePagination(results.directories));
+    sendSuccess(results.response, {
+        albums: calculatePagination(results.directories)
+    });
 }
 
 function calculatePagination (directories) {
@@ -107,21 +121,6 @@ function calculatePagination (directories) {
     }
 
     return directories.splice(0, pagination[1]);
-}
-
-function displayError (err, response) {
-    response.writeHead(503, { 'Content-Type': 'application/json' });
-    response.end(JSON.stringify(err) + '\n');
-}
-
-function displaySuccess (response, directories) {
-    var output = {
-        error: null,
-        data: { albums: directories }
-    };
-
-    response.writeHead(200, { 'Content-Type': 'application/json' });
-    response.end(JSON.stringify(output) + '\n');
 }
 
 function loadAlbumContent (response, requestedUrl, callback) {
@@ -160,26 +159,57 @@ function loadAlbumContent (response, requestedUrl, callback) {
 
 function handleAlbumContent (err, results) {
     if (err) {
-        return displayError(err, results.response);
+        return sendFailure(results.response, 404, err);
     }
 
-    displayPhotos(results.response, results.album, results.photos);
+    sendSuccess(results.response, { 
+        album: results.album,
+        photos: results.photos
+    });
 }
 
-function displayPhotos (response, album, photos) {
-    var output = {
-        error: null,
-        data: { 
-            album: album,
-            photos: photos
-        }
-    };
+function renameAlbum (request, response) {
+    var core_url = url_settings.pathname,
+        url_sections = core_url.split('/');
+
+    if (url_sections.length !== 4) {
+        return sendFailure(response, 404, invalidResource(core_url));
+    }
+}
+
+function handleRenaming (err, results) {
+    if (err) {
+        return sendFailure(results.response, 404, err);
+    }
+}
+
+// HTTP HANDLERS...
+
+function makeError (err, msg) {
+    var e = new Error(msg);
+        e.code = err;
+    
+    return e;
+}
+
+function sendSuccess (response, data) {
+    var output = { error: null, data: data };
 
     response.writeHead(200, { 'Content-Type': 'application/json' });
     response.end(JSON.stringify(output) + '\n');
 }
 
-function noContent (response) {
-    response.writeHead(200, { 'Content-Type': 'application/json' });
-    response.end(JSON.stringify({ error: 'Sorry, no content to provide to you' }) + '\n');
+function sendFailure (response, code, err) {
+    var code = (err.code) ? err.code : err.name;
+
+    response.writeHead(code, { 'Content-Type' : 'application/json' });
+    response.end(JSON.stringify({ error: code, message: err.message }) + '\n');
+}
+
+function invalidResource() {
+    return makeError('invalid_resource', 'the requested resource does not exist.');
+}
+
+function noSuchAlbum() {
+    return make_error('no_such_album', 'The specified album does not exist');
 }
