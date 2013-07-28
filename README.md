@@ -40,3 +40,82 @@ if (err) {
 ```
 
 ...as in this example we don't care about the returned value, we're just running some code that displays an error but we also want to bail out of our current function as quickly as possible.
+
+## Asynchronous work-arounds
+
+There are a few ways to handle asynchronous operations in Node.
+
+You can use a basic counter...
+
+```js
+function loadAlbumList (response, callback) {
+    var directories = [],
+        pattern = /(\d)/g,
+        pagination = [],
+        counter = 0,
+        match;
+
+    fs.readdir(__dirname + '/albums/', function (err, files) {
+        if (err) {
+            return callback(response, err);
+        }
+
+        files.forEach(function (value) {
+            fs.stat('albums/' + value, function (err, stat) {
+                if (err) {
+                    callback(response, err);
+                    return callback = null; // overwrite the callback (see conditional check below)
+                }
+
+                if (stat.isDirectory()) {
+                    directories.push(value);
+                }
+
+                /*
+                    Using a basic counter is one way of handling asynchronous operations.
+                    Because this function's closure still has access to variables 
+                    outside it we can use that to help us determine when to execute the callback.
+                 */
+                if (++counter === files.length && callback) {
+                    while ((match = pattern.exec(url_settings.query)) !== null) {
+                        pagination.push(match[1]);
+                        pattern.lastIndex++;
+                    }
+
+                    directories.splice(pagination[0] * pagination[1], pagination[1]);
+                    
+                    callback(response, null, directories);
+                }
+            });
+        });
+    });
+}
+```
+
+...or you can use a async library.
+
+The following example uses the `after` module...
+
+```js
+fs.readdir(__dirname + '/albums/', function (err, files) {
+    if (err) {
+        return callback(err, response);
+    }
+
+    done = after(files.length, callback);
+
+    files.forEach(function (value) {
+        fs.stat('albums/' + value, function (err, stat) {
+            if (err) {
+                return done(err);
+            }
+
+            if (stat.isDirectory()) {
+                directories.push(value);
+            }
+
+            done(null, results);
+        });
+    });
+});
+```
