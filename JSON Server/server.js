@@ -175,12 +175,52 @@ function renameAlbum (request, response) {
     if (url_sections.length !== 4) {
         return sendFailure(response, 404, invalidResource(core_url));
     }
+
+    var albumName = url_sections[2],
+        jsonBody = '';
+
+    request.on('readable', function(){
+        var data = request.read();
+
+        if (data) {
+            if (typeof data == 'string') {
+                jsonBody += data;
+            } else if (typeof data == 'object' && data instanceof Buffer) {
+                jsonBody += data.toString('utf8');
+            }
+        }
+    });
+
+    request.on('end', function(){
+        if (jsonBody) {
+            try {
+                var albumData = JSON.parse(jsonBody);
+
+                if (!albumData.album) {
+                    return sendFailure(response, 403, missingData('album'));
+                }
+            } catch (err) {
+                return sendFailure(response, 403, badJson());
+            }
+
+            processAlbumRename(albumName, albumData.album, function (err, results) {
+                if (err && err.code === 'ENOENT') {
+                    return sendFailure(response, 403, noSuchAlbum());
+                } else if (err) {
+                    return sendFailure(response, 500, fileError(err));
+                }
+
+                sendSuccess(response, null);
+            });
+        } else {
+            sendFailure(response, 403, badJson());
+            response.end();
+        }
+    });
 }
 
-function handleRenaming (err, results) {
-    if (err) {
-        return sendFailure(results.response, 404, err);
-    }
+function processAlbumRename (oldName, newName, callback) {
+    fs.rename('albums/' + oldName, 'albums/' + newName, callback);
 }
 
 // HTTP HANDLERS...
@@ -211,5 +251,20 @@ function invalidResource() {
 }
 
 function noSuchAlbum() {
-    return make_error('no_such_album', 'The specified album does not exist');
+    return makeError('no_such_album', 'The specified album does not exist');
+}
+
+function fileError (err) {
+    return makeError('server_file_error', 'There was a file error on the server: ' + err.message);
+}
+
+function missingData (missing) {
+    var msg = missing
+        ? 'Your request is missing: \'' + missing + '\''
+        : 'Your request is missing some data.';
+    return makeError('missing_data', msg);
+}
+
+function badJson() {
+    return makeError('invalid_json', 'the provided data is not valid JSON');
 }
