@@ -119,3 +119,11 @@ fs.readdir(__dirname + '/albums/', function (err, files) {
     });
 });
 ```
+
+## Streams
+
+Streams are a powerful way to transfer large amounts of data in Node while maintaining the asynchronous, nonblocking nature of the system.
+
+You listen to stream events on the `Request` object (like a standard event system), mainly the `readable` and `end` events.
+
+You then `read()` the data coming in and once the `end` event fires, pass that read data into a callback function to do something with it.
