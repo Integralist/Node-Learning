@@ -1,5 +1,6 @@
 var http = require('http'),
-    fs   = require('fs');
+    fs   = require('fs'),
+    qs   = require('querystring');
 
 var server = http.createServer(processRequest);
     server.listen(8080);
@@ -8,7 +9,12 @@ function processRequest (request, response) {
     var formData = '';
 
     request.on('readable', function(){
-        formData += request.read().toString('utf8'); // request.read() is an instanceof Buffer
+        var readContent = request.read().toString('utf8'),
+            parsedContent = qs.parse(readContent);
+
+        formData += readContent.toString('utf8'); // request.read() is an instanceof Buffer
+        
+        console.log(parsedContent, parsedContent.fullname, parsedContent.age);
         console.log('read: ', formData);
     });
 

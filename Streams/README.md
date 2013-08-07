@@ -6,6 +6,8 @@ Node.js applications must also interact with various streams, either with the fi
 
 A buffer is a tricky thing to define. It's basically an Array of bytes, an entity composed of raw data. The Array isn't resizable, and in fact, you shouldn't really use any array classes. Most methods dealing with files or server responses in Node.js are actually buffers.
 
-So we convert the Buffer into something we can read using `request.read().toString('utf8')`
+So we convert the Buffer into something we can read using `request.read().toString('utf8')`.
+
+We can then use a built-in Node module `querystring` which can parse the converted string data.
 
 For us to load HTML easily we'll use `readFile` and then `response.write` the content to the `response` object.
