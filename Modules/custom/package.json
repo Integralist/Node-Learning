@@ -1,0 +1,5 @@
+{
+    "name": "some-random-name",
+    "version": "1.0.0",
+    "main": "./lib/a.js"
+}
