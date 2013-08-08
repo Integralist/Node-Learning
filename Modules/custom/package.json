@@ -2,5 +2,7 @@
     "name": "some-random-name",
     "version": "1.0.0",
     "main": "./lib/a.js",
-    "private": true // prevents publishing to npm
+
+    "comment": "prevent publishing to npm",
+    "private": true
 }
