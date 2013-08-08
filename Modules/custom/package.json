@@ -1,5 +1,6 @@
 {
     "name": "some-random-name",
     "version": "1.0.0",
-    "main": "./lib/a.js"
+    "main": "./lib/a.js",
+    "private": true // prevents publishing to npm
 }

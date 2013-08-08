@@ -13,3 +13,5 @@ Node has rules for where it looks for modules that are `require()`'ed.
 ## Node module packaging
 
 If you want to split a module (e.g. JavaScript file) into multiple files (to keep your code/module functionality in a nice modular/object-oriented format) OR write unit-tests, documentation etc then you'll need to group those files into a folder and include a package.json file so Node knows what to load up (if no json file is found Node will look for an `index.js` file instead).
+
+The important part though is if you want to reference this module via the name property (`some-random-name`) specified in the `package.json` file, you'll need to go into the folder where the `package.json` file is and run `npm link` which tells npm to put a link to the `some-random-name` package in the local machine’s default public package repository.
