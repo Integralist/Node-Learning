@@ -196,3 +196,14 @@ You then `read()` the data coming in and once the `end` event fires, pass that r
 - 500 Internal Server Error—Something happened resulting in the server being unable to process the request. You typically use this error for situations in which you know the code has entered some sort of inconsistent or buggy state and needs developer attention.
 
 - 503 Service Unavailable—This indicates some sort of runtime failure, such as temporarily low on memory or having troubles with network resources. It’s still a fatal error like 500, but it does suggest the client could try again in a while.
+
+## RESTful APIs
+
+The word `REST` comes from Representational State Transfer, and basically implies that you can request an accurate representation of an object from the server. REST APIs focus on four core operations (which, coincidentally, map to four HTTP request methods):
+
+- Creation (`PUT`)
+- Retrieval (`GET`)
+- Updating (`POST`)
+- Destruction (`DELETE`)
+
+Some people refer to these operations as CRUD, and pretty much everything you do in your API centers around doing one of these things to objects.
