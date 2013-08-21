@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
     makeError: function (err, msg) {
         var e = new Error(msg);
@@ -26,5 +28,22 @@ module.exports = {
 
         res.writeHead(code, { 'Content-Type' : 'application/json' });
         res.end(JSON.stringify({ error: code, message: err.message }) + '\n');
+        
+        res.write(JSON.stringify({ error: code, message: err.message }) + '\n');
+    },
+
+    returnContentTypeFor: function (file) {
+        var extension = path.extname(file),
+            type;
+
+        switch (extension.toLowerCase()) {
+            case '.html': type = 'text/html'; break;
+            case '.js'  : type = 'text/javascript'; break;
+            case '.css' : type = 'text/css'; break;
+            case '.jpg' : type = 'image/jpeg'; break;
+            default     : type = 'text/plain';
+        }
+
+        return type;
     }
 };
