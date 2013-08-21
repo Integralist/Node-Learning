@@ -209,3 +209,19 @@ The word `REST` comes from Representational State Transfer, and basically implie
 Some people refer to these operations as CRUD, and pretty much everything you do in your API centers around doing one of these things to objects.
 
 Try to version your API so that users can opt-in to the particular version of your API. `domain.com/api/v1/albums/photos/`
+
+## Middleware
+
+Because Express comes with Connect you can `use()` any of the middleware that connect can (as long as it's also mentioned in your package.json). For a list of middleware available see [http://www.senchalabs.org/connect/](http://www.senchalabs.org/connect/).
+
+Express actually exposes these for you: `app.use(express.compress());`
+
+## Configuration and Node Environments
+
+To run your app (using Express) with a particular configuration you'll need to set a `NODE_ENV` environment variable: `NODE_ENV=production node program.js`, then you can use the `configure` method like so...
+
+```js
+app.configure('production', function(){
+    app.use(express.compress()); // only gzip on production
+});
+```
