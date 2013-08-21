@@ -70,6 +70,12 @@ if (err) {
 
 ...as in this example we don't care about the returned value, we're just running some code that displays an error but we also want to bail out of our current function as quickly as possible.
 
+## I/O (Streams not file system API)
+
+It is generally considered a good idea to use Streams over the standard file system API.
+
+For example, yes using `readFile` is async and so non-blocking (as per the benefits of using Node), but the buffer and memory of your application will get filled up (if it has lots of users making requests for that file at once) because that method stores up all the buffer content and then sends it, where as with Streams you can incrementally send data back to the client as it arrives thus emptying the buffer and memory of your application and allowing it to scale more easily.
+
 ## Events
 
 It's a common practice for Node code to inherit from Node's core event library... 
