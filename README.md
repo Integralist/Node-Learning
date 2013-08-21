@@ -207,3 +207,5 @@ The word `REST` comes from Representational State Transfer, and basically implie
 - Destruction (`DELETE`)
 
 Some people refer to these operations as CRUD, and pretty much everything you do in your API centers around doing one of these things to objects.
+
+Try to version your API so that users can opt-in to the particular version of your API. `domain.com/api/v1/albums/photos/`
