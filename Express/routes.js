@@ -1,4 +1,4 @@
-var helpers = require('./libs/helpers.js');
+var helpers = require('./libs/helpers');
 
 module.exports = function (app) {
     /*

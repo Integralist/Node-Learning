@@ -1,5 +1,5 @@
 var fs = require('fs'),
-    http_handlers = require('./http.js');
+    http_handlers = require('./http');
 
 module.exports = {
     loadPage: function (req, res, file) {
