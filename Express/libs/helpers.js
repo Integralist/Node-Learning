@@ -1,3 +1,6 @@
+var fs = require('fs'),
+    http_handlers = require('./http.js');
+
 module.exports = {
     loadPage: function (req, res, file) {
         this.checkFileExists(req, res, file, function (err, file) {
@@ -6,8 +9,8 @@ module.exports = {
             }
 
             this.streamContent(req, res, file);
-        });
-    }
+        }.bind(this));
+    },
 
     checkFileExists: function (req, res, file, callback) {
         fs.exists(file, function (exists) {
@@ -17,7 +20,7 @@ module.exports = {
 
             callback(null, file);
         });
-    }
+    },
 
     displayErrorPage: function (req, res) {
         var content = 'Sorry, the file does not exist';
@@ -27,7 +30,7 @@ module.exports = {
         res.setHeader('Content-Length', content.length);
 
         return res.end(content);
-    }
+    },
 
     streamContent: function (req, res, file) {
         var readStream = fs.createReadStream(file);
