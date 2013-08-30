@@ -37,7 +37,7 @@ module.exports = function (app) {
 
         // The bodyParser middleware automatically saves the file
         // So we need to make sure that we're not wasting space by saving the same file
-        // TODO
+        // TODO: compare by hash http://nodejs.org/api/crypto.html#crypto_crypto_createhash_algorithm
         
         res.end('Thanks for the file');
     });
