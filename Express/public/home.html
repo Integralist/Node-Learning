@@ -7,6 +7,21 @@
         <link rel="stylesheet" href="Assets/Styles/test.css">
     </head>
     <body>
-        Home page
+        <h1>Home page</h1>
+
+        <h2>Post data to server</h2>
+
+        <form action="postdata" method="post">
+            name: <input name="fullname">
+            age: <input name="age">
+            <input type="submit">
+        </form>
+
+        <h2>File Upload</h2>
+
+        <form action="uploadfile" method="post" enctype="multipart/form-data">
+            <input type="file" name="fileToUpload">
+            <input type="submit">
+        </form>
     </body>
 </html>
