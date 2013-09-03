@@ -230,3 +230,17 @@ app.configure('production', function(){
 ```
 
 You can also set your `NODE_ENV` variable within your application using the global `process`: `process.env.NODE_ENV = 'development'`
+
+These methods remain for backward compatability but the up to date way to do these checks is like so...
+
+```js
+// development only
+if () {
+  app.set('db uri', 'localhost/dev');
+}
+
+// production only
+if (app.get('env') === 'production') {
+  app.set('db uri', 'n.n.n.n/prod');
+}
+```
