@@ -11,6 +11,18 @@ module.exports = function (app) {
         helpers.loadPage(req, res, 'public/root.html');
     });
 
+    app.get('/test-view', function (req, res) {
+        res.render('users', {
+            users: [
+                { name: 'tobi', email: 'tobi@learnboost.com' },
+                { name: 'loki', email: 'loki@learnboost.com' },
+                { name: 'jane', email: 'jane@learnboost.com' }
+            ],
+            title: "EJS example",
+            header: "Some users"
+        });
+    })
+
     /*
         Any files that don't exist in our static directory can 
         still be accessed if we specifically add a route for them
