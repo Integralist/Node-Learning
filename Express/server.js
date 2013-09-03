@@ -13,4 +13,4 @@ process.on('uncaughtException', function (err) {
     process.exit(-1); // terminate the node process
 });
 
-console.log(process);
+// console.log(process);

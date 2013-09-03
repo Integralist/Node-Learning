@@ -3,7 +3,7 @@ module.exports = function (app, express) {
     app.use(express.compress());
 
     // serve static files from this directory
-    app.use(express.static('public'));
+    app.use(express.static(__dirname + '/public'));
 
     // handle file uploads
     app.use(express.bodyParser({ 

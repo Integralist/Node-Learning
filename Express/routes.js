@@ -8,7 +8,7 @@ module.exports = function (app) {
      */
  
     app.get('/', function (req, res) {
-        helpers.loadPage(req, res, 'public/home.html');
+        helpers.loadPage(req, res, 'public/root.html');
     });
 
     /*
