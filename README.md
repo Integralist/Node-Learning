@@ -218,10 +218,15 @@ Express actually exposes these for you: `app.use(express.compress());`
 
 ## Configuration and Node Environments
 
-To run your app (using Express) with a particular configuration you'll need to set a `NODE_ENV` environment variable: `NODE_ENV=production node program.js`, then you can use the `configure` method like so...
+To run your app (using Express) with a particular configuration you'll need to set a `NODE_ENV` environment variable: `NODE_ENV=production && node program.js`, then you can use the `configure` method like so...
 
 ```js
 app.configure('production', function(){
     app.use(express.compress()); // only gzip on production
+
+    // OR set some variables...
+    app.set('log level', 'warningsOnly')
 });
 ```
+
+You can also set your `NODE_ENV` variable within your application using the global `process`: `process.env.NODE_ENV = 'development'`
