@@ -244,3 +244,48 @@ if (app.get('env') === 'production') {
   app.set('db uri', 'n.n.n.n/prod');
 }
 ```
+
+## Databases
+
+### MongoDB
+
+- Install Database Server
+- Run Database Server
+- Using the interactive Shell
+- Make it work with Node using compatible Driver
+
+#### Install Database Server
+
+Download from [http://www.mongodb.org/downloads](http://www.mongodb.org/downloads) and copy the contents of the folder (which is just a `bin` folder) to somewhere you'll remember, I did:
+
+`~/db/mongo/2.4.6/` (2.4.6 being the version number of the server)
+
+You'll also need to create a folder to store your databases: `~/db/mongo/2.4.6/databases/` (you can see I just added a subfolder called `databases`)
+
+#### Run Database Server
+
+Run `mongod --dbpath ../databases` (from within the `bin` folder).
+
+Note: if you don't create a folder to store your databases then `mongod` can be run without the `--dbpath` flag and so will default to a `/data/db/` directory (if that doesn't exist then you'll want to create it as the database server will error otherwise).
+
+#### Using the interactive Shell
+
+To run the interactive shell just type `mongo` (from within the `bin` folder). You can then see all databases using `show dbs` (you'll see when starting the server that a `local` database has been automatically created).
+
+When running the shell you only need to run the commands, nothing is persisted after the shell is closed.
+
+So the shell has a `db` variable which tells you want database is in use. If you want to change databases use `use myNewDBName` then `db` will equal `myNewDBName`.
+
+You can then insert records into that new database using `db.myTestCollection.insert({ name: "Mark" })` and then find that data using `db.myTestCollection.find()` which returns all records in the database.
+
+For a reference to the full shell commands see [http://docs.mongodb.org/manual/reference/mongo-shell/](http://docs.mongodb.org/manual/reference/mongo-shell/)
+
+#### Make it work with Node using compatible Driver
+
+Add `"mongodb": "1.3.x"` to your package.json file and run `npm install`
+
+Terminology is slightly different from traditional relational databases:
+
+- Tables = Collections
+- Rows = Documents
+- Cell = File
