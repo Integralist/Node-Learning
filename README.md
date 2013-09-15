@@ -28,7 +28,7 @@ If there is an error then another pattern is to check if the error being passed 
 
 ### Inline Callbacks
 
-Inline callbacks should be kept and then a callback function passed in which we call if we find an error (we pass the error to it) and we call if there is a success (we pass null and then the success)... 
+Inline callbacks should be kept and then a callback function passed in which we call if we find an error (we pass the error to it) and we call if there is a success (we pass null and then the success)...
 
 ```js
 function loadFileContent (path, callback) {
@@ -49,7 +49,7 @@ When outputting JSON data there should always be an `error` property and a `data
 
 ### Returning Data/Values
 
-Node patterns indicate that devs like to return fast and early, but also the act of returning is generally considered to be for breaking the flow rather than needing the returned value. 
+Node patterns indicate that devs like to return fast and early, but also the act of returning is generally considered to be for breaking the flow rather than needing the returned value.
 
 So for example, instead of...
 
@@ -78,7 +78,7 @@ For example, yes using `readFile` is async and so non-blocking (as per the benef
 
 ## Events
 
-It's a common practice for Node code to inherit from Node's core event library... 
+It's a common practice for Node code to inherit from Node's core event library...
 
 ```js
 var events = require('events');
@@ -124,7 +124,7 @@ function loadAlbumList (response, callback) {
 
                 /*
                     Using a basic counter is one way of handling asynchronous operations.
-                    Because this function's closure still has access to variables 
+                    Because this function's closure still has access to variables
                     outside it we can use that to help us determine when to execute the callback.
                  */
                 if (++counter === files.length && callback) {
@@ -134,7 +134,7 @@ function loadAlbumList (response, callback) {
                     }
 
                     directories.splice(pagination[0] * pagination[1], pagination[1]);
-                    
+
                     callback(response, null, directories);
                 }
             });
@@ -277,6 +277,10 @@ When running the shell you only need to run the commands, nothing is persisted a
 So the shell has a `db` variable which tells you want database is in use. If you want to change databases use `use myNewDBName` then `db` will equal `myNewDBName`.
 
 You can then insert records into that new database using `db.myTestCollection.insert({ name: "Mark" })` and then find that data using `db.myTestCollection.find()` which returns all records in the database.
+
+To delete a database you create (either here in the shell or when running code
+that creates a new database) first switch to using the database and the run
+`db.dropDatabase()`
 
 For a reference to the full shell commands see [http://docs.mongodb.org/manual/reference/mongo-shell/](http://docs.mongodb.org/manual/reference/mongo-shell/)
 
